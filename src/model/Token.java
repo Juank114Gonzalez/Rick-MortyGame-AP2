@@ -7,12 +7,10 @@ public class Token {
 	
 	
 	
-	public Token(int collectedSeeds, Character asciiSymbol) {
-		super();
-		this.collectedSeeds = collectedSeeds;
+	public Token( Character asciiSymbol) {
+		this.collectedSeeds = 0;
 		this.asciiSymbol = asciiSymbol;
 	}
-
 
 
 	public int getCollectedSeeds() {

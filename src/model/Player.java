@@ -1,9 +1,19 @@
 package model;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public double score;
-	public String nickName;
+	public String nickname;
 	
+	public Player(String nickname) {
+		this.nickname = nickname;
+		this.score = 0;
+	}
 	
 	public double getScore() {
 		return score;
@@ -12,9 +22,9 @@ public class Player {
 		this.score = score;
 	}
 	public String getNickName() {
-		return nickName;
+		return nickname;
 	}
 	public void setNickName(String nickName) {
-		this.nickName = nickName;
+		this.nickname = nickName;
 	}
 }
