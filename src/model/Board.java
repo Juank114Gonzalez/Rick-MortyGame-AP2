@@ -19,6 +19,8 @@ public class Board {
 	 * @param p, int, this is the amount of links over the boards
 	 */
 	public Board(int rick, int morty, int n, int m, int q, int p) {
+		this.m = m;
+		this.n = n;
 		this.rick = rick;
 		this.morty = morty;
 		createBoard(n,m,q,p);
@@ -96,7 +98,7 @@ public class Board {
 	}
 
 	public String showBoard() {
-		return board.toString(m);
+		return board.toString(m,n);
 	}
 
 	public void showLinks() {

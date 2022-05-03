@@ -4,11 +4,14 @@ public class LinkedList {
 
 	// Head
 	private Node head;
-
+	private int size;
+	private Token rick = new Token('R');
+	private Token morty = new Token('M');
 	private int boxesQuant;
 
 	public LinkedList(int boxesQuant) {
 		this.boxesQuant = boxesQuant;
+		setSize(0);
 	}
 
 	/**
@@ -24,6 +27,11 @@ public class LinkedList {
 	 *               board
 	 */
 	public void init(int n, int seeds, int links) {
+		if (n == 0) {
+			setValuesOfBoard(seeds, links);
+			return;
+		}
+		size++;
 
 		if (head == null) {
 			boxesQuant = n;
@@ -31,11 +39,8 @@ public class LinkedList {
 			head = (Node) node;
 			head.setNext(head);
 			head.setPrev(head);
-		} else if (n == 0) {
+			init(n - 1, seeds, links);
 
-			setValuesOfBoard(seeds, links);
-
-			return;
 		} else {
 			Node node = new Node();
 			Node tail = node;
@@ -64,6 +69,7 @@ public class LinkedList {
 		// TODO Auto-generated method stub
 		putSeeds(seeds);
 		generateLinks(links);
+		setRickAndMorty();
 	}
 
 	/**
@@ -73,8 +79,8 @@ public class LinkedList {
 		int i = 1 + (int) (Math.random() * boxesQuant - 1);
 		int j = 1 + (int) (Math.random() * boxesQuant - 1);
 		if (i != j && !get(head, i).getSeed() && !get(head, j).getSeed()) {
-			get(head, i).setRick(new Token('R'));
-			get(head, j).setMorty(new Token('M'));
+			get(head, i).setRick(rick);
+			get(head, j).setMorty(morty);
 		} else {
 			setRickAndMorty();
 		}
@@ -152,8 +158,8 @@ public class LinkedList {
 	 * @param m, int, stop condition
 	 * @return it returns an ASCII representation of the board
 	 */
-	public String toString(int m) {
-		return toString(head, "", m, 0, 0);
+	public String toString(int m, int n) {
+		return toString(head, "", m, n, 0);
 	}
 
 	/**
@@ -168,21 +174,65 @@ public class LinkedList {
 	 *             columns
 	 * @return
 	 */
-	public String toString(Node current, String acc, int m, int i, int j) {
-		if (j == m) {
+	public String toString(Node current, String acc, int m, int n, int j) {
+		System.out.println(j);
+		if (j == n) {
 			return acc;
 		}
-		if (j % m == 0 && j != 0) {
-			if (i % 2 != 0) {
-				acc += acc + "\n";
-			} else {
-				acc += "\n" + acc;
-			}
-			i++;
+
+		if (j % 2 == 0) {
+			acc += getIndexesRight(current, 0, m, "") + "\n";
+		} else {
+			acc += getIndexesLeft(current, 0, m, "") + "\n";
 		}
 
-		acc += valueOfNode(current);
-		return toString(current.getNext(), acc, m, i, j + 1);
+		return toString(increaseNode(current, 0, m), acc, m, n, j + 1);
+	}
+
+	/**
+	 * 
+	 * @param current
+	 * @param i
+	 * @param limit
+	 * @return
+	 */
+	public Node increaseNode(Node current, int i, int limit) {
+		if (i == limit) {
+			return current;
+		}
+		return increaseNode(current.getNext(), i + 1, limit);
+	}
+
+	/**
+	 * This method gets the index from a node until it
+	 * 
+	 * @param current
+	 * @param i
+	 * @return
+	 */
+	public String getIndexesRight(Node current, int i, int limit, String output) {
+		if (i == limit) {
+			return output;
+		}
+		output += valueOfNode(current);
+		return getIndexesRight(current.getNext(), i + 1, limit, output);
+
+	}
+
+	/**
+	 * This method gets the index from a node until it
+	 * 
+	 * @param current
+	 * @param i
+	 * @return
+	 */
+	public String getIndexesLeft(Node current, int i, int limit, String output) {
+		if (i == limit) {
+			return output;
+		}
+		output = valueOfNode(current) + output;
+		return getIndexesLeft(current.getNext(), i + 1, limit, output);
+
 	}
 
 	/**
@@ -217,7 +267,90 @@ public class LinkedList {
 			}
 		}
 
-		return out;
+		return "[ " + out + " ]";
+	}
+
+	public void movePlayerBackward(int dice, Token tokenToMove) {
+		Node playerNode = findPlayer(head, tokenToMove);
+
+		// movePlayer(playerNode, dice);
+		Token t = new Token();
+		if (tokenToMove.equals(rick)) {
+			t = playerNode.getRick();
+			playerNode.setRick(null);
+		} else {
+			t = playerNode.getMorty();
+			playerNode.setMorty(null);
+		}
+		movePlayerBackward(playerNode, t, dice, tokenToMove);
+
+	}
+
+	public void movePlayerForward(int dice, Token tokenToMove) {
+		Node playerNode = findPlayer(head, tokenToMove);
+
+		// movePlayer(playerNode, dice);
+		Token t = new Token();
+		if (tokenToMove.equals(rick)) {
+			t = playerNode.getRick();
+			playerNode.setRick(null);
+		} else {
+			t = playerNode.getMorty();
+			playerNode.setMorty(null);
+		}
+		movePlayerForward(playerNode, t, dice, tokenToMove);
+
+	}
+
+	private void movePlayerForward(Node current, Token t, int dice, Token tokenToMove) {
+		// condicion de parada
+		if (dice == 0) {
+			if (tokenToMove.equals(rick)) {
+				current.setRick(t);
+			} else {
+				current.setMorty(t);
+			}
+
+			return;
+		}
+		// Metodo recursivo
+		movePlayerForward(current.getNext(), t, dice - 1, tokenToMove);
+	}
+
+	private void movePlayerBackward(Node current, Token t, int dice, Token tokenToMove) {
+		// condicion de parada
+		if (dice == 0) {
+			if (tokenToMove.equals(rick)) {
+				current.setRick(t);
+			} else {
+				current.setMorty(t);
+			}
+
+			return;
+		}
+		// Metodo recursivo
+		movePlayerBackward(current.getPrev(), t, dice - 1, tokenToMove);
+	}
+
+	private Node findPlayer(Node current, Token tokenToFind) {
+		if (current.getMorty() != null || current.getMorty() != null) {
+			return current;
+		}
+		return findPlayer(current.getNext(), tokenToFind);
+	}
+
+	/**
+	 * @return the size
+	 */
+	public int size() {
+		return size;
+	}
+
+	/**
+	 * @param size the size to set
+	 */
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 }

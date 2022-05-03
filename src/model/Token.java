@@ -11,6 +11,9 @@ public class Token {
 		this.collectedSeeds = 0;
 		this.asciiSymbol = asciiSymbol;
 	}
+	public Token() {
+		
+	}
 
 
 	public int getCollectedSeeds() {

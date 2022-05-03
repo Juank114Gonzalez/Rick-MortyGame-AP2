@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import model.Board;
 import model.Player;
+import model.Token;
 import model.UserData;
 
 /**
@@ -155,7 +156,7 @@ public class Main {
 
 		while (exit != true) {
 			System.out.println("---What do u wanna do?----\n" + "1. Roll dice\n" + "2. See board\n" + "3. See links\n"
-					+ "4. Marker\n" + "0. Exit\n" +
+					+ "4. Scoreboard \n" + "0. Exit\n" +
 
 					"\nEnter an option\n");
 			opcion = sc.nextInt();
@@ -166,7 +167,7 @@ public class Main {
 				throwDice();
 				break;
 			case 2:
-				showBorard();
+				showBoard();
 				break;
 			case 3:
 				showLinks();
@@ -198,7 +199,7 @@ public class Main {
 			if (option != 1 && option != 2) {
 				System.out.println("Type a valid value :)");
 			}
-			System.out.println("Where should you move to?\n" + "1. Forward" + "2. Backward");
+			System.out.println("Where should you move to?\n" + "1. Forward \n" + "2. Backward");
 
 			option = sc.nextInt();
 		} while (option != 1 && option != 2);
@@ -219,8 +220,8 @@ public class Main {
 	 * This method shows a graphical representation in ASCII characters of the game
 	 * board.
 	 */
-	public static void showBorard() {
-
+	public static void showBoard() {
+		System.out.println(board.showBoard());
 	}
 
 	/**
@@ -245,7 +246,8 @@ public class Main {
 	 * @param diceValue, int, Number of times the player will move forward
 	 */
 	public static void moveForward(int diceValue) {
-
+		board.getBoard().movePlayerForward(diceValue, new Token('M'));
+		System.out.println(board.showBoard());
 	}
 
 	/**
@@ -254,7 +256,8 @@ public class Main {
 	 * @param diceValue, int, Number of times the player will move backward
 	 */
 	public static void moveBackward(int diceValue) {
-
+		board.getBoard().movePlayerBackward(diceValue, new Token('M'));
+		System.out.println(board.showBoard());
 	}
 
 	/**
@@ -273,9 +276,9 @@ public class Main {
 
 		int n, m, p, q;
 		System.out.println("Enter the number of rows");
-		n = sc.nextInt();
-		System.out.println("Enter the number of columns");
 		m = sc.nextInt();
+		System.out.println("Enter the number of columns");
+		n = sc.nextInt();
 		do {
 			System.out.println("Enter the quantity of links");
 			p = sc.nextInt();
@@ -289,7 +292,7 @@ public class Main {
 			q = sc.nextInt();
 		} while (q >= n * m);
 
-		board = new Board(rickIndex, mortyIndex, n, m, q, p);
+		board = new Board(rickIndex, mortyIndex, m, n, q, p);
 
 	}
 
