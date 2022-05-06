@@ -5,6 +5,8 @@ public class Node {
 	private int index;
 	private Token rick;
 	private Token morty;
+	private String linkTo;
+	private boolean linked;
 	private boolean seed;
 
 
@@ -26,11 +28,12 @@ public class Node {
 
 	public Node(int index) {
 		this.index = index;
+		this.linkTo = " ";
 	}
 	
 
 	public Node() {
-		
+		this.linkTo = " ";
 	}
 	
 	
@@ -58,7 +61,6 @@ public class Node {
 		this.morty = morty;
 	}
 	
-
 	public int getIndex() {
 		return index;
 	}
@@ -82,4 +84,38 @@ public class Node {
 	public void setNext(Node next) {
 		this.next = next;
 	}
+
+
+	/**
+	 * @return the linkTo
+	 */
+	public String getLinkTo() {
+		return linkTo;
+	}
+
+
+	/**
+	 * @param linkTo the linkTo to set
+	 */
+	public void setLinkTo(String linkTo) {
+		this.linkTo = linkTo;
+	}
+
+
+	/**
+	 * @return the linked
+	 */
+	public boolean isLinked() {
+		return linked;
+	}
+
+
+	/**
+	 * @param linked the linked to set
+	 */
+	public void setLinked(boolean linked) {
+		this.linked = linked;
+	}
+	
+	
 }

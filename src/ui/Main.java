@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import model.Board;
 import model.Player;
+import model.Token;
 import model.UserData;
 
 /**
@@ -26,19 +27,47 @@ public class Main {
 	private static Board board;
 	static Scanner sc = new Scanner(System.in);
 
+	/**
+	 * Main method of JAVA
+	 * 
+	 * @param args, String[], contains the information supplied to the command line
+	 *              arguments as an Array of String objects.
+	 */
 	public static void main(String[] args) {
-		/**if (fileExists("data/UserData.txt")) {
+
+		if (fileExists("data/UserData.txt")) {
 			loadUserData();
-		}*/
+		}
+
 		int rickIndex;
 		int mortyIndex;
 		System.out.println("Rick: ");
 		rickIndex = login();
 		System.out.println("Morty: ");
 		mortyIndex = login();
-		initBoard(rickIndex,mortyIndex);
-		System.out.println(board.showBoard());
-		//showMenu();
+		initBoard(rickIndex, mortyIndex);
+		int i = 0;
+
+		long startTime = System.nanoTime();
+
+		while (board.getWinner() == null) {
+			if (i == 0) {
+				showMenu(i);
+				i = 1;
+			} else {
+				showMenu(i);
+				i = 0;
+			}
+
+			if (board.getBoard().gameOver()) {
+				System.out.println("-----No hay mas semillas-----");
+				long endTime = System.nanoTime();
+				long duration = (long) ((endTime - startTime) * 0.000000001);
+				System.out.println(board.determineWinner(duration));
+				System.out.println(board.getPodium());
+			}
+		}
+
 	}
 
 	/**
@@ -53,20 +82,23 @@ public class Main {
 	private static int login() {
 		// TODO Auto-generated method stub
 
-		System.out.println("Type your username: ");
-		String nickname = sc.next();
-		Player newPlayer = new Player(nickname);
 		
-		if(!fileExists("data/UserData.txt")) {
-			UserData.userData.add(newPlayer);
-			saveAsJavaByteCode();
-		}else if (!verifyUserExists(nickname)) {
-			UserData.userData.add(newPlayer);
-		}
-		
+		Player newPlayer = null;
+		String nickname = "";
+		do {
+			System.out.println("Type your username: ");
+			nickname = sc.next();
+			newPlayer = new Player(nickname);
+			if (!verifyUserExists(nickname)) {
+				UserData.userData.add(newPlayer);
+				break;
+			}else {
+				System.out.println("This user is already registered");
+			}
+			
+		}while(verifyUserExists(nickname));
 		int playerIndex = UserData.userData.indexOf(newPlayer);
 		return playerIndex;
-
 	}
 
 	/**
@@ -100,9 +132,10 @@ public class Main {
 		return out;
 
 	}
-	
+
 	/**
-	 * This method saves all the data contained on the ArrayList "CineController.userData"
+	 * This method saves all the data contained on the ArrayList
+	 * "CineController.userData"
 	 */
 	public static void saveAsJavaByteCode() {
 		try {
@@ -137,13 +170,21 @@ public class Main {
 		}
 	}
 
-	public static void showMenu() {
+	/**
+	 * 
+	 * This is the method in charge of showing the different action options of the
+	 * system, it also reads what the user wants to do according to the numbers
+	 * assigned to each of the options
+	 */
+	public static void showMenu(int i) {
 		boolean exit = false;
 		int opcion = 0;
 
-		while (exit != true) {
-			System.out.println("---What do u wanna do?----\n" + "1. Roll dice\n" + "2. See board\n" + "3. See links\n"
-					+ "4. Marker\n" + "0. Exit\n" +
+		while (!exit && board.getWinner() == null) {
+			String player = i == 0 ? "Rick" : "Morty";
+
+			System.out.println("It is " + player + "'s turn! ---What do you want to do?----\n" + "1. Roll dice\n"
+					+ "2. See board\n" + "3. See links\n" + "4. Scoreboard \n" +
 
 					"\nEnter an option\n");
 			opcion = sc.nextInt();
@@ -151,10 +192,11 @@ public class Main {
 			switch (opcion) {
 
 			case 1:
-				throwDice();
+				throwDice(i);
+				exit = true;
 				break;
 			case 2:
-				showBorard();
+				showBoard();
 				break;
 			case 3:
 				showLinks();
@@ -162,44 +204,108 @@ public class Main {
 			case 4:
 				showScore();
 				break;
-			case 0:
-				exit = true;
+			default:
+				System.out.println("Please, type a valid option");
 				break;
 			}
 		}
 	}
 
-	public static void throwDice() {
+	/**
+	 * This method is responsible for generating a random integer between 1 and 6,
+	 * representing the dice. When the die is generated and displayed, the user is
+	 * asked if they want to move forward or backward.
+	 */
+	public static void throwDice(int i) {
+		int option = 1;
+		int dice = 1 + (int) (Math.random() * 6);
+		System.out.println(dice + " is the value of the dice!\n");
+
+		do {
+			if (option != 1 && option != 2) {
+				System.out.println("Type a valid value :)");
+			}
+			System.out.println("Where should you move to?\n" + "1. Forward \n" + "2. Backward");
+
+			option = sc.nextInt();
+		} while (option != 1 && option != 2);
+
+		Token playerToMove = i == 0 ? new Token('R') : new Token('M');
+		switch (option) {
+		case 1:
+			moveForward(dice, playerToMove);
+			break;
+
+		case 2:
+			moveBackward(dice, playerToMove);
+			break;
+		}
 
 	}
 
-	public static void showBorard() {
-
+	/**
+	 * This method shows a graphical representation in ASCII characters of the game
+	 * board.
+	 */
+	public static void showBoard() {
+		System.out.println(board.showBoard());
 	}
 
+	/**
+	 * This method shows a graphical representation in ASCII characters of the links
+	 * of the game board.
+	 */
 	public static void showLinks() {
-
+		System.out.println(board.showLinks());
 	}
 
+	/**
+	 * This method returns a historical score table of the users who have played the
+	 * game
+	 */
 	public static void showScore() {
-
+		System.out.println(board.getBoard().showScores());
 	}
 
-	public static void moveAlong() {
-
+	/**
+	 * This method triggers player movement forward
+	 * 
+	 * @param diceValue, int, Number of times the player will move forward
+	 */
+	public static void moveForward(int diceValue, Token tokenToMove) {
+		board.getBoard().movePlayerForward(diceValue, tokenToMove);
+		System.out.println(board.showBoard());
 	}
 
-	public static void moveBack() {
-
+	/**
+	 * This method triggers player movement backward
+	 * 
+	 * @param diceValue, int, Number of times the player will move backward
+	 */
+	public static void moveBackward(int diceValue, Token tokenToMove) {
+		board.getBoard().movePlayerBackward(diceValue, tokenToMove);
+		System.out.println(board.showBoard());
 	}
 
+	/**
+	 * This method reads the parameters that the user wants their board to have.
+	 * 
+	 * @param rickIndex,  int, this is the index of the player 1, "Rick", that is
+	 *                    trying to login, it will be the size of the array if its a
+	 *                    new player, otherwise, it will correspond to its first
+	 *                    occurrence into the array
+	 * @param mortyIndex, int, this is the index of the player 2, "Morty", that is
+	 *                    trying to login, it will be the size of the array if its a
+	 *                    new player, otherwise, it will correspond to its first
+	 *                    occurrence into the array
+	 */
 	public static void initBoard(int rickIndex, int mortyIndex) {
 
 		int n, m, p, q;
 		System.out.println("Enter the number of rows");
-		n = sc.nextInt();
-		System.out.println("Enter the number of columns");
 		m = sc.nextInt();
+		System.out.println("Enter the number of columns");
+		n = sc.nextInt();
 		do {
 			System.out.println("Enter the quantity of links");
 			p = sc.nextInt();
@@ -213,8 +319,8 @@ public class Main {
 			q = sc.nextInt();
 		} while (q >= n * m);
 
-		board = new Board(rickIndex,mortyIndex,n,m,q,p);
-		
+		board = new Board(rickIndex, mortyIndex, m, n, q, p);
+
 	}
 
 }
