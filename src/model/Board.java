@@ -1,9 +1,11 @@
 package model;
 
 public class Board {
-
-	private int rick; // this is the index of the player which moves as rick on the game
-	private int morty; // this is the index of the player which moves as morty on the game
+	private Token rick;
+	private Token morty;
+	
+	//private int rick; // this is the index of the player which moves as rick on the game
+	//private int morty; // this is the index of the player which moves as morty on the game
 	private int n; // this is the amount of rows
 	private int m; // this is the amount of columns
 
@@ -31,35 +33,26 @@ public class Board {
 		// int n, int seeds, int links
 		board.init((n * m), q, p);
 	}
-
-
-	/**
-	 * @return the rick
-	 */
-	public int getRick() {
-		return rick;
+	
+	
+	public String showBoard() {
+		return board.toString(m,n);
 	}
 
-	/**
-	 * @param rick the rick to set
-	 */
-	public void setRick(int rick) {
-		this.rick = rick;
+	public void showLinks() {
+		
+	}
+	
+	public void score() {
+		
+			System.out.println(morty);
+		
+		
 	}
 
-	/**
-	 * @return the morty
-	 */
-	public int getMorty() {
-		return morty;
-	}
-
-	/**
-	 * @param morty the morty to set
-	 */
-	public void setMorty(int morty) {
-		this.morty = morty;
-	}
+	
+	
+	
 
 	/**
 	 * @return the n
@@ -97,14 +90,19 @@ public class Board {
 		this.board = board;
 	}
 
-	public String showBoard() {
-		return board.toString(m,n);
+	/**
+	 * @param rick the rick to set
+	 */
+	public void setRick(Token rick) {
+		this.rick = rick;
 	}
 
-	public void showLinks() {
-
+	/**
+	 * @param morty the morty to set
+	 */
+	public void setMorty(Token morty) {
+		this.morty = morty;
 	}
+ 
 	
-	
-
 }

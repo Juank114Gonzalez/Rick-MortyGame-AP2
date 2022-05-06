@@ -237,7 +237,7 @@ public class Main {
 	 * game
 	 */
 	public static void showScore() {
-
+		// board.score();
 	}
 
 	/**

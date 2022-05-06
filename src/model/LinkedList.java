@@ -3,11 +3,14 @@ package model;
 public class LinkedList {
 
 	// Head
+	private Board board;
 	private Node head;
 	private int size;
-	private Token rick = new Token('R');
-	private Token morty = new Token('M');
+	private Token rick = new Token('R',0);
+	private Token morty = new Token('M',0);
 	private int boxesQuant;
+	private int seed = 0;
+
 
 	public LinkedList(int boxesQuant) {
 		this.boxesQuant = boxesQuant;
@@ -283,7 +286,7 @@ public class LinkedList {
 			playerNode.setMorty(null);
 		}
 		movePlayerBackward(playerNode, t, dice, tokenToMove);
-
+		
 	}
 
 	public void movePlayerForward(int dice, Token tokenToMove) {
@@ -307,14 +310,25 @@ public class LinkedList {
 		if (dice == 0) {
 			if (tokenToMove.equals(rick)) {
 				current.setRick(t);
+				
 			} else {
 				current.setMorty(t);
+				
+				///
+				if (current.getSeed()) {
+					System.out.println("semilla");
+					current.setSeed(false);
+				
+					
+				}
 			}
 
 			return;
 		}
 		// Metodo recursivo
 		movePlayerForward(current.getNext(), t, dice - 1, tokenToMove);
+	
+
 	}
 
 	private void movePlayerBackward(Node current, Token t, int dice, Token tokenToMove) {
@@ -352,5 +366,7 @@ public class LinkedList {
 	public void setSize(int size) {
 		this.size = size;
 	}
+	
+
 
 }

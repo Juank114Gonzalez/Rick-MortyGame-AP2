@@ -7,8 +7,8 @@ public class Token {
 	
 	
 	
-	public Token( Character asciiSymbol) {
-		this.collectedSeeds = 0;
+	public Token( Character asciiSymbol, int collectedSeed) {
+		this.collectedSeeds = collectedSeed;
 		this.asciiSymbol = asciiSymbol;
 	}
 	public Token() {
